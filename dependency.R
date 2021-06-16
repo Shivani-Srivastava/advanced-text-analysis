@@ -15,4 +15,5 @@ if (!require(tools)) {install.packages("tools")};  library(tools)
 if (!require(ggraph)) {install.packages("ggraph")};  library(ggraph)
 if (!require(igraph)) {install.packages("igraph")};  library(igraph)
 if (!require(DT)) {install.packages("DT")};  library(DT)
+if (!require(tidytext)) {install.packages("tidytext")};  library(tidytext)
 
