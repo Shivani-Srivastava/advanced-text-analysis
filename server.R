@@ -36,6 +36,9 @@ shinyServer(function(input, output) {
             }
     })
     
+    output$sam_data <- renderDataTable({
+      datatable(head(dataset()),rownames = FALSE)
+    })
     
     text_summ <- reactive({summary(quanteda::corpus(dataset()[,input$y]))})
     quant_mod <- reactive({quanteda::corpus(dataset()[,input$y])})
@@ -184,6 +187,7 @@ shinyServer(function(input, output) {
     })
     
     output$an_df <- renderDataTable({
+      req(input$file)
       anotated_data()%>%filter(doc_id==input$d_sel & sentence_id==input$s_sel)
     })
     
@@ -282,9 +286,48 @@ shinyServer(function(input, output) {
         if (is.null(input$file) | is.null(input$model)) { return(NULL) }
         else{
             summ_table <- as.data.frame(table(anotated_data()$upos))
-            colnames(summ_table) <- c("POS TAG", "Count")
+            colnames(summ_table) <- c("POS TAG", "Unique Count")
             summ_table <- replace_abb(summ_table)
-            return(summ_table)
+            
+            #----added code---#
+            x <- anotated_data()
+            # collect all upos tokens, deduplicated
+            a0 = anotated_data()$upos %>% unique; a0
+            stor_list = vector(mode="list", length=length(a0))
+            for (i0 in 1:length(a0)){
+              stor_list[[i0]] = x %>% filter(upos == a0[i0]) %>% 
+                select(token) %>% unique() %>% as.list() %>%
+                unlist() %>% as.character() %>% str_c(., collapse=", ")
+            }
+            
+            a2=stor_list %>% as.data.frame(); dim(a2)
+            a3=str_replace_all(a2, "\\.\\.", ", "); a3[1]
+            a1 = data.frame(upos = a0, tokens = a3); dim(a1)
+            
+            dict <- c('ADJ'= 'adjective',
+                      'ADP'= 'adposition',
+                      'ADV'= 'adverb',
+                      'AUX'= 'auxiliary',
+                      'CCONJ'= 'coordinating conjunction',
+                      'DET'= 'determiner',
+                      'INTJ'= 'interjection',
+                      'NOUN'= 'noun',
+                      'NUM'= 'numeral',
+                      'PART'= 'particle',
+                      'PRON'= 'pronoun',
+                      'PROPN'= 'proper noun',
+                      'PUNCT'= 'punctuation',
+                      'SCONJ'= 'subordinating conjunction',
+                      'SYM'= 'symbol',
+                      'VERB'= 'verb',
+                      'X'= 'other')
+            
+            a4 = as.data.frame(dict)
+            a5 = data.frame(upos = rownames(a4), desc = a4); a5
+            rownames(a5) = NULL; a5
+            outp = dplyr::left_join(a5, a1, by="upos")
+            outp1 <- outp %>% left_join(summ_table,by = c("dict" = "POS TAG"))
+            datatable(outp1,rownames = FALSE)
         }
         
     },options = list(pageLength = 5))
