@@ -78,7 +78,7 @@ shinyUI(fluidPage(
                              
                     tabPanel("Data Summary",value=1,
                              h4("Sample of Uploaded Data"),
-                             dataTableOutput("sam_data"),
+                             DT::dataTableOutput("sam_data"),
                              hr(),
                              h4("Sentence level summary"),
                              htmlOutput("text"),
