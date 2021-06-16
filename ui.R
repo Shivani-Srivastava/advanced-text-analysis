@@ -5,6 +5,14 @@ library(ggplot2)
 library(lattice)
 library(shinymaterial)
 library(markdown)
+library(shinyWidgets)
+library(wordcloud)
+library(tidytext)
+library(udpipe)
+library(igraph)
+library(ggraph)
+library(ggplot2)
+
 shinyUI(fluidPage(
     
     title = "Advanced Text Analysis",
@@ -42,7 +50,9 @@ shinyUI(fluidPage(
         #progressBar(id = "pb4", value = 50, display_pct = TRUE)
         conditionalPanel(condition = "input.tabselected==3",
                          selectInput("key_algo",'Select keyword extraction algorithm',choices = c("RAKE","Noun-Verb Phrase")),
-                         sliderInput('key_slider',"Select top k keywords to display",min = 1,max = 100,value = 20,step = 1)
+                         sliderInput('key_slider',"Select top k keywords to display",min = 1,max = 100,value = 20,step = 1),
+                         sliderInput('min_freq',"Minimum frequency",min = 1,max = 50,value = 3,step = 1)
+                         
         )
         
         ),
@@ -111,6 +121,8 @@ shinyUI(fluidPage(
                     
                              ),
                     tabPanel("Document level Analysis",value=2,
+                             h4("Annotated Text"),
+                             DT::dataTableOutput("an_df"),
                              h4("Selcted sentence"),
                              helpText("Note: Please wait annotation will take time"),
                              verbatimTextOutput('sel_sent1'),
@@ -119,7 +131,9 @@ shinyUI(fluidPage(
                              ),
                   
                     tabPanel("Keyword Extraction",value=3,
-                             h4('Keyword Extraction'),
+                             h5('Extracted keyword dataframe'),
+                             DT::dataTableOutput('ext_df'),
+                             h5("Plot"),
                              withSpinner(plotOutput('key_plot'))
                              
                     ),id="tabselected"
