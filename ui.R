@@ -76,7 +76,10 @@ shinyUI(fluidPage(
                     
                               
                              
-                    tabPanel("Summary Stats",value=1,
+                    tabPanel("Data Summary",value=1,
+                             h4("Sample of Uploaded Data"),
+                             dataTableOutput("sam_data"),
+                             hr(),
                              h4("Sentence level summary"),
                              htmlOutput("text"),
                              hr(),
@@ -89,8 +92,10 @@ shinyUI(fluidPage(
                     tabPanel("POS TAG",value=1,
                              h4("Summary Table"), 
                              helpText("Note: Please wait annotation will take time"),
-                             withSpinner(dataTableOutput(outputId = "a_table")),
+                             withSpinner(DT::dataTableOutput(outputId = "a_table")),
+                             hr(),
                              withSpinner(plotOutput("pos_plot")),
+                             hr(),
                              dropdownButton(
                                  
                                  tags$h3("List of Inputs"),
@@ -114,6 +119,7 @@ shinyUI(fluidPage(
                              ),
                              
                              plotOutput(outputId = 'word_cloud',width = "800",height = "400"),
+                             hr(),
                              h4("Download DTM of selected POS"),
                              #h3("-------------"),
                              verbatimTextOutput("dtm_text"),
@@ -123,13 +129,15 @@ shinyUI(fluidPage(
                     tabPanel("Document level Analysis",value=2,
                              h4("Annotated Text"),
                              DT::dataTableOutput("an_df"),
-                             h4("Selcted sentence"),
+                             ),
+                    tabPanel("Dependency Tree",value = 2,
+                             h4("Selected sentence"),
                              helpText("Note: Please wait annotation will take time"),
                              verbatimTextOutput('sel_sent1'),
                              h4("Sentence level dpendency tree"),
-                             plotOutput("dep_tre",width = "100%"),
+                             plotOutput("dep_tre",width = "100%")
                              ),
-                  
+                    
                     tabPanel("Keyword Extraction",value=3,
                              h5('Extracted keyword dataframe'),
                              DT::dataTableOutput('ext_df'),
