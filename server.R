@@ -43,17 +43,17 @@ shinyServer(function(input, output) {
     output$text <- renderUI({
         req(input$file$datapath)
         str1 <- paste("Total no of documets:", nrow(dataset()))
-        str2 <- paste("range of sentences per document: ",min(text_summ()$Sentences),"-",max(text_summ()$Sentences))
+        str2 <- paste("Range of sentences per document: ",min(text_summ()$Sentences),"-",max(text_summ()$Sentences))
         #str3 <- paste("Maximum number of sentence: ",)
-        str4 <- paste("Average number of sentences per document: ",mean(text_summ()$Sentences))
+        str4 <- paste("Average number of sentences per document: ",round(mean(text_summ()$Sentences),2))
         HTML(paste(str1, str2,str4, sep = '<br/>'))
     })
 
     output$text2 <- renderUI({
         req(input$file$datapath)
-        str2 <- paste("range of words per document: ",min(text_summ()$Tokens),'-',max(text_summ()$Tokens))
+        str2 <- paste("Range of words per document: ",min(text_summ()$Tokens),'-',max(text_summ()$Tokens))
         #str3 <- paste("range of words per document:: ",max(text_summ()$Tokens))
-        str4 <- paste("Average number of word: ",mean(text_summ()$Tokens))
+        str4 <- paste("Average number of words: ",round(mean(text_summ()$Tokens),2))
         HTML(paste(str2,str4, sep = '<br/>'))
     })
     
@@ -183,6 +183,9 @@ shinyServer(function(input, output) {
         
     })
     
+    output$an_df <- renderDataTable({
+      anotated_data()%>%filter(doc_id==input$d_sel & sentence_id==input$s_sel)
+    })
     
     # Select variables:
     output$pos_select_ui <- renderUI({
@@ -325,6 +328,41 @@ shinyServer(function(input, output) {
     })
     
     #---Keyword tab code
+    
+    output$ext_df <- renderDataTable({
+      if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+      else{
+        if(input$key_algo=="RAKE"){
+          stats <- keywords_rake(x = anotated_data(), term = "lemma", group = "doc_id", 
+                                 relevant = anotated_data()$upos %in% c("NOUN", "ADJ"))
+          
+          stats<- stats %>%mutate_if(is.numeric,round,digits = 2)
+          stats <- subset(stats, freq > input$min_freq )
+          return(datatable(stats,rownames = FALSE))
+          # stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
+          # p1 <- barchart(key ~ rake, data = head(subset(stats, freq > 3), input$key_slider), col = "red", 
+          #                main = "Top Keywords identified by RAKE", 
+          #                xlab = "Rake")
+          #print(p1)
+        }
+        if(input$key_algo=="Noun-Verb Phrase"){
+          phrase_tags <- as_phrasemachine(anotated_data()$upos, type = "upos")
+          stats <- keywords_phrases(x = phrase_tags, term = tolower(anotated_data()$token),
+                                    pattern = "(A|N)*N(P+D*(A|N)*N)*",
+                                    is_regex = TRUE, detailed = FALSE)
+          stats <- subset(stats, ngram > 1 & freq > input$min_freq)
+          return(datatable(stats,rownames = FALSE))
+          # stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
+          # p2<- barchart(key ~ freq, data = head(stats, input$key_slider), col = "magenta",
+          #               main = "Keywords - simple noun phrases", xlab = "Frequency")
+          # print(p2)
+          
+        }
+      }
+      
+    })
+    
+    
     output$key_plot <- renderPlot({
         if (is.null(input$file) | is.null(input$model)) { return(NULL) }
         else{
@@ -332,7 +370,7 @@ shinyServer(function(input, output) {
                 stats <- keywords_rake(x = anotated_data(), term = "lemma", group = "doc_id", 
                                        relevant = anotated_data()$upos %in% c("NOUN", "ADJ"))
                 stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
-                p1 <- barchart(key ~ rake, data = head(subset(stats, freq > 3), input$key_slider), col = "red", 
+                p1 <- barchart(key ~ rake, data = head(subset(stats, freq > input$min_freq), input$key_slider), col = "red", 
                                main = "Top Keywords identified by RAKE", 
                                xlab = "Rake")
                 print(p1)
@@ -342,7 +380,7 @@ shinyServer(function(input, output) {
                 stats <- keywords_phrases(x = phrase_tags, term = tolower(anotated_data()$token),
                                           pattern = "(A|N)*N(P+D*(A|N)*N)*",
                                           is_regex = TRUE, detailed = FALSE)
-                stats <- subset(stats, ngram > 1 & freq > 3)
+                stats <- subset(stats, ngram > 1 & freq > input$min_freq)
                 stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
                 p2<- barchart(key ~ freq, data = head(stats, input$key_slider), col = "magenta",
                               main = "Keywords - simple noun phrases", xlab = "Frequency")
