@@ -36,7 +36,7 @@ shinyServer(function(input, output) {
             }
     })
     
-    output$sam_data <- renderDataTable({
+    output$sam_data <- DT::renderDataTable({
       datatable(head(dataset()),rownames = FALSE)
     })
     
@@ -186,7 +186,7 @@ shinyServer(function(input, output) {
         
     })
     
-    output$an_df <- renderDataTable({
+    output$an_df <- DT::renderDataTable({
       req(input$file)
       anotated_data()%>%filter(doc_id==input$d_sel & sentence_id==input$s_sel)
     })
@@ -282,7 +282,7 @@ shinyServer(function(input, output) {
     #--------#
     
     
-    output$a_table <- renderDataTable({
+    output$a_table <- DT::renderDataTable({
         if (is.null(input$file) | is.null(input$model)) { return(NULL) }
         else{
             summ_table <- as.data.frame(table(anotated_data()$upos))
@@ -372,7 +372,7 @@ shinyServer(function(input, output) {
     
     #---Keyword tab code
     
-    output$ext_df <- renderDataTable({
+    output$ext_df <- DT::renderDataTable({
       if (is.null(input$file) | is.null(input$model)) { return(NULL) }
       else{
         if(input$key_algo=="RAKE"){
