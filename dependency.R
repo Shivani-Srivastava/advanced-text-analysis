@@ -17,5 +17,7 @@ if (!require(igraph)) {install.packages("igraph")};  library(igraph)
 if (!require(DT)) {install.packages("DT")};  library(DT)
 if (!require(tidytext)) {install.packages("tidytext")};  library(tidytext)
 if (!require(shinycssloaders)) {install.packages("shinycssloaders")};  library(shinycssloaders)
+if (!require(shinymaterial)) {install.packages("shinymaterial")};  library(shinymaterial)
+
 
 
