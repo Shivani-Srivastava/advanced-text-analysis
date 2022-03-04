@@ -12,6 +12,9 @@ library(udpipe)
 library(igraph)
 library(ggraph)
 library(ggplot2)
+library(DT)
+library(tm)
+library(stringr)
 
 shinyUI(fluidPage(
     
@@ -77,8 +80,7 @@ shinyUI(fluidPage(
                               
                              
                     tabPanel("Data Summary",value=1,
-                             h4("Sample of Uploaded Data"),
-                             DT::dataTableOutput("sam_data"),
+                             
                              hr(),
                              h4("Sentence level summary"),
                              htmlOutput("text"),
@@ -87,7 +89,9 @@ shinyUI(fluidPage(
                              htmlOutput("text2"),
                              hr(),
                              h4("Wordcloud"),
-                             plotOutput('wc')),
+                             plotOutput('wc'),
+                            h4("Sample of Uploaded Data"),
+                             DT::dataTableOutput("sam_data")),
                     
                     tabPanel("POS TAG",value=1,
                              h4("Summary Table"), 
