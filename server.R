@@ -188,7 +188,19 @@ shinyServer(function(input, output) {
     
     output$an_df <- DT::renderDataTable({
       req(input$file)
-      anotated_data()%>%filter(doc_id==input$d_sel & sentence_id==input$s_sel)
+      
+        dat <- anotated_data()%>%filter(doc_id==input$d_sel & sentence_id==input$s_sel)
+      
+      dtable <- datatable(dat, rownames = FALSE, 
+                          options = list(
+                            rowsGroup = list(0,1,2,3) # merge cells of column 1
+                          ))
+      path <- "/www" # folder containing dataTables.rowsGroup.js
+      dep <- htmltools::htmlDependency(
+        "RowsGroup", "2.0.0", 
+        path, script = "dataTables.rowsGroup.js")
+      dtable$dependencies <- c(dtable$dependencies, list(dep))
+      dtable
     })
     
     # Select variables:
