@@ -42,7 +42,7 @@ shinyUI(fluidPage(
                          htmlOutput('pos_select_ui'),
                          textInput('stopw',label = "Enter stopwords seperated by comma"),
                          
-                         sliderInput('pos_slider',"Select top k words to display",min = 1,max = 100,value = 20,step = 1),
+                         #sliderInput('pos_slider',"Select top k words to display",min = 1,max = 100,value = 20,step = 1),
                          
                          ),
         conditionalPanel(condition = "input.tabselected==2",
@@ -51,12 +51,12 @@ shinyUI(fluidPage(
                          sliderInput('size_sel',"Plot Size",min=1,max=10,value=2,step = 1)
                          ),
         #progressBar(id = "pb4", value = 50, display_pct = TRUE)
-        conditionalPanel(condition = "input.tabselected==3",
-                         selectInput("key_algo",'Select keyword extraction algorithm',choices = c("RAKE","Noun-Verb Phrase")),
-                         sliderInput('key_slider',"Select top k keywords to display",min = 1,max = 100,value = 20,step = 1),
-                         sliderInput('min_freq',"Minimum frequency",min = 1,max = 50,value = 3,step = 1)
+        #conditionalPanel(condition = "input.tabselected==3",
+         #                selectInput("key_algo",'Select keyword extraction algorithm',choices = c("RAKE","Noun-Verb Phrase")),
+         #                sliderInput('key_slider',"Select top k keywords to display",min = 1,max = 100,value = 20,step = 1),
+         #                sliderInput('min_freq',"Minimum frequency",min = 1,max = 50,value = 3,step = 1)
                          
-        )
+        #)
         
         ),
     
@@ -96,9 +96,7 @@ shinyUI(fluidPage(
                     tabPanel("POS TAG",value=1,
                              h4("Summary Table"), 
                              helpText("Note: Please wait annotation will take time"),
-                             withSpinner(DT::dataTableOutput(outputId = "a_table")),
-                             hr(),
-                             withSpinner(plotOutput("pos_plot")),
+                             #withSpinner(DT::dataTableOutput(outputId = "a_table")),
                              hr(),
                              dropdownButton(
                                  
@@ -141,14 +139,7 @@ shinyUI(fluidPage(
                              h4("Sentence level dpendency tree"),
                              plotOutput("dep_tre",width = "100%")
                              ),
-                    
-                    tabPanel("Keyword Extraction",value=3,
-                             h5('Extracted keyword dataframe'),
-                             DT::dataTableOutput('ext_df'),
-                             h5("Plot"),
-                             withSpinner(plotOutput('key_plot'))
-                             
-                    ),id="tabselected"
+                    id="tabselected"
                     
         )
     )
