@@ -18,6 +18,7 @@ if (!require(DT)) {install.packages("DT")};  library(DT)
 if (!require(tidytext)) {install.packages("tidytext")};  library(tidytext)
 if (!require(shinycssloaders)) {install.packages("shinycssloaders")};  library(shinycssloaders)
 if (!require(shinymaterial)) {install.packages("shinymaterial")};  library(shinymaterial)
+if (!require(data.table)) {install.packages("data.table")};  library(data.table)
 if (!require(wordcloud)) {install.packages("wordcloud")};  library(wordcloud)
 
 
