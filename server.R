@@ -1,15 +1,15 @@
 #
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
+# Advanced Text Analysis - Using UDPIPE
 #
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
+# Parts-of-speech Tagging 
+# 
 #
 library(tools)
 library(shiny)
+library(htmltools)
+
 options(shiny.maxRequestSize=100*1024^2)
-# Define server logic required to draw a histogram
+
 shinyServer(function(input, output) {
 
     dataset <- reactive({
@@ -23,14 +23,8 @@ shinyServer(function(input, output) {
             }
             else{
                 Document = read.csv(input$file$datapath ,header=TRUE, sep = ",", stringsAsFactors = F,encoding="UTF-8")
-                #Document[,1] <- str_to_title(Document[,1])
-               # Document[,1] <- make.names(Document[,1], unique=TRUE)
-               # Document[,1] <- tolower(Document[,1])
-               # Document[,1] <- str_replace_all(Document[,1],"\\.","_")
-                #Document<-Document[complete.cases(Document), ]
+                
                 Document$Doc.id = seq(1:nrow(Document))
-               # Document <- Document[!(duplicated(Document[,1])), ]
-               # rownames(Document) <- Document[,1]
                 return(Document)
                 }
             }
@@ -39,6 +33,13 @@ shinyServer(function(input, output) {
     output$sam_data <- DT::renderDataTable({
       datatable(head(dataset()),rownames = FALSE)
     })
+    
+#    df2 <- x_tabtab %>%
+#select(doc_id, token, upos) %>%
+#group_by(upos) %>%
+#mutate(POS = paste0(token, collapse = ",")) %>%
+#distinct(doc_id, POS, .keep_all = TRUE)
+
     
     text_summ <- reactive({summary(quanteda::corpus(dataset()[,input$y]))})
     quant_mod <- reactive({quanteda::corpus(dataset()[,input$y])})
@@ -186,10 +187,53 @@ shinyServer(function(input, output) {
         
     })
     
+    
+    # Create a Corpus wise DF of POS distribution
+    # D * 5; where D is the number of documents and 5 POS is shown: With the sentence? Without the sentence?
+    
+    corpus_DF_creation <- reactive({
+      if(is.null(input$model)) {return(NULL)}
+      else{
+        #x <- annotated_data()
+        filtered_DF <- select(anotated_data(), c('doc_id','token','upos'))
+        df = NULL
+        for (i in unique(filtered_DF$doc_id)){
+          
+          corpus_specific_DF <- filtered_DF %>% filter(filtered_DF$doc_id == i)
+          df4 <- corpus_specific_DF %>% select(doc_id, token, upos) %>% group_by(upos) %>% mutate( POS = paste0(token, collapse = ",")) %>% distinct(doc_id, POS, .keep_all = TRUE)
+          #print(head(df4))
+          df = rbind(df, df4)
+          
+        }
+        df = df %>% select(doc_id, upos, POS)
+        return(df)  
+      }
+    })
+    
+    output$corpus_DF <- DT::renderDataTable({
+      req(input$file)
+      dat <- corpus_DF_creation() %>% select(doc_id, upos, POS) %>% filter(upos == "NOUN" | upos == "ADV" | upos == "VERB" | upos == "ADJ" | upos == "PROPN")
+      # aa = df_null  %>% 
+      dat
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '200px', targets = "_all"))
+    ))
+    
+    output$download_corpus <- downloadHandler(
+      filename = function() {paste(str_split(input$file$name,"\\.")[[1]][1],"_DF.csv",collapse = "") },
+      content = function(file) {
+        new_dtm <- corpus_DF_creation()
+        write.csv(new_dtm, file, row.names=F)
+      }
+    )
+    
+    #Code to Merge Rows in Sentence wise DataFrame
+    
     output$an_df <- DT::renderDataTable({
       req(input$file)
-      
-        dat <- anotated_data()%>%filter(doc_id==input$d_sel & sentence_id==input$s_sel)
+      dat <- anotated_data()%>%filter(doc_id==input$d_sel & sentence_id==input$s_sel)
       
       dtable <- datatable(dat, rownames = FALSE, 
                           options = list(
@@ -201,6 +245,7 @@ shinyServer(function(input, output) {
         path, script = "dataTables.rowsGroup.js")
       dtable$dependencies <- c(dtable$dependencies, list(dep))
       dtable
+      
     })
     
     # Select variables:
