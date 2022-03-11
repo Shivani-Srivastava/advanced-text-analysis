@@ -53,8 +53,8 @@ shinyUI(fluidPage(
         #progressBar(id = "pb4", value = 50, display_pct = TRUE)
         #conditionalPanel(condition = "input.tabselected==3",
          #                selectInput("key_algo",'Select keyword extraction algorithm',choices = c("RAKE","Noun-Verb Phrase")),
-         #                sliderInput('key_slider',"Select top k keywords to display",min = 1,max = 100,value = 20,step = 1),
-         #                sliderInput('min_freq',"Minimum frequency",min = 1,max = 50,value = 3,step = 1)
+          #               sliderInput('key_slider',"Select top k keywords to display",min = 1,max = 100,value = 20,step = 1),
+           #              sliderInput('min_freq',"Minimum frequency",min = 1,max = 50,value = 3,step = 1)
                          
         #)
         
@@ -80,8 +80,6 @@ shinyUI(fluidPage(
                               
                              
                     tabPanel("Data Summary",value=1,
-                             
-                             hr(),
                              h4("Sentence level summary"),
                              htmlOutput("text"),
                              hr(),
@@ -90,14 +88,18 @@ shinyUI(fluidPage(
                              hr(),
                              h4("Wordcloud"),
                              plotOutput('wc'),
-                            h4("Sample of Uploaded Data"),
-                             DT::dataTableOutput("sam_data")),
+                             h4("Sample of Uploaded Data"),
+                             DT::dataTableOutput("sam_data"),
+                             hr()
+                             ),
                     
                     tabPanel("POS TAG",value=1,
                              h4("Summary Table"), 
                              helpText("Note: Please wait annotation will take time"),
-                             #withSpinner(DT::dataTableOutput(outputId = "a_table")),
-                             hr(),
+                             h4('Parts of Speech'),
+                             downloadButton('download_corpus', 'Download Parts of Speech Dataset (as shown below)'),br(),
+                             DT::dataTableOutput('corpus_DF'),
+                             
                              dropdownButton(
                                  
                                  tags$h3("List of Inputs"),
@@ -121,17 +123,22 @@ shinyUI(fluidPage(
                              ),
                              
                              plotOutput(outputId = 'word_cloud',width = "800",height = "400"),
+                             
                              hr(),
                              h4("Download DTM of selected POS"),
-                             #h3("-------------"),
+                             
                              verbatimTextOutput("dtm_text"),
                              downloadButton('download_dtm', 'Download DTM'),br(),
                     
                              ),
+                    
+                    
+                    
                     tabPanel("Document level Analysis",value=2,
                              h4("Annotated Text"),
                              DT::dataTableOutput("an_df"),
                              ),
+                    
                     tabPanel("Dependency Tree",value = 2,
                              h4("Selected sentence"),
                              helpText("Note: Please wait annotation will take time"),
