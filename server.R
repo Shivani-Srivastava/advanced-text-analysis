@@ -7,6 +7,8 @@
 library(tools)
 library(shiny)
 library(htmltools)
+library("nametagger")
+library(dplyr)
 
 options(shiny.maxRequestSize=100*1024^2)
 
@@ -60,7 +62,6 @@ shinyServer(function(input, output) {
         str4 <- paste("Average number of words: ",round(mean(text_summ()$Tokens),2))
         HTML(paste(str2,str4, sep = '<br/>'))
     })
-    
     
     
     
@@ -187,6 +188,21 @@ shinyServer(function(input, output) {
         
     })
     
+    ner_model <- nametagger_download_model("english-conll-140408", model_dir = tempdir())
+    
+    x00 = reactive({ anotated_data() %>% select(c("doc_id", "sentence_id", "token")) %>% rename(text = token) })
+    entities <- reactive({ predict(ner_model, x00()) %>% filter(., entity != "O")}) # 0.03s
+    
+    output$entity_DF <- renderDataTable({
+      req(input$file)
+      as.data.frame(entities())
+      #cat('Yay')
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '200px', targets = "_all"))
+    ))
+    
     
     # Create a Corpus wise DF of POS distribution
     # D * 5; where D is the number of documents and 5 POS is shown: With the sentence? Without the sentence?
@@ -249,9 +265,9 @@ shinyServer(function(input, output) {
     })
     
     # Select variables:
-    output$pos_select_ui <- renderUI({
-        if (is.null(input$file)) { return(NULL) }
-        else{
+    #output$pos_select_ui <- renderUI({
+       # if (is.null(input$file)) { return(NULL) }
+       # else{
             
             # radioButtons("pos_select", "Display most frequent",
             #                    choiceNames = 
@@ -260,12 +276,11 @@ shinyServer(function(input, output) {
             #                        list("NOUN", "VERB", "ADJ", "ADV","NNPS")
             # )
             
-            checkboxGroupInput("pos_select",
-                               "Choose most frequent",
-                               choiceNames = list("Noun","Verb","Adjective","Adverb","Proper Noun"),
-                               choiceValues = list("NOUN","VERB","ADJ","ADV","NNPS"),selected = "NOUN")
-        }
-    })
+        #    checkboxGroupInput("pos_select",
+         #                      "Choose most frequent (For Word Cloud)",
+          #                     choiceNames = list("Noun","Verb","Adjective","Adverb","Proper Noun"),
+           #                    choiceValues = list("NOUN","VERB","ADJ","ADV","NNPS"),selected = "NOUN")
+        #}})
     
     stopw <- reactive({
         stpw <- unlist(strsplit(input$stopw,","))
