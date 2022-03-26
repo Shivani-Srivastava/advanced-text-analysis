@@ -20,5 +20,6 @@ if (!require(shinycssloaders)) {install.packages("shinycssloaders")};  library(s
 if (!require(shinymaterial)) {install.packages("shinymaterial")};  library(shinymaterial)
 if (!require(data.table)) {install.packages("data.table")};  library(data.table)
 if (!require(wordcloud)) {install.packages("wordcloud")};  library(wordcloud)
+if (!require(nametagger)) {install.packages("nametagger")};  library(nametagger)
 
 
