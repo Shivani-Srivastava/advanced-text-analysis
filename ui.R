@@ -39,8 +39,8 @@ shinyUI(fluidPage(
                          htmlOutput("pre_proc1"),
                          htmlOutput("pre_proc2"),
                          htmlOutput("pre_proc3"),
-                         htmlOutput('pos_select_ui'),
-                         textInput('stopw',label = "Enter stopwords seperated by comma"),
+                         #htmlOutput('pos_select_ui'),
+                         textInput('stopw',label = "Enter stopwords seperated by comma (For Word Cloud)"),
                          
                          #sliderInput('pos_slider',"Select top k words to display",min = 1,max = 100,value = 20,step = 1),
                          
@@ -130,6 +130,11 @@ shinyUI(fluidPage(
                              verbatimTextOutput("dtm_text"),
                              downloadButton('download_dtm', 'Download DTM'),br(),
                     
+                             ),
+                    
+                    tabPanel("Named Entity Recognition", value = 1,
+                             h4("NER"),
+                             dataTableOutput('entity_DF')
                              ),
                     
                     
