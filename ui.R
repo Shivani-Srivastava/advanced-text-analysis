@@ -98,38 +98,8 @@ shinyUI(fluidPage(
                              helpText("Note: Please wait annotation will take time"),
                              h4('Parts of Speech'),
                              downloadButton('download_corpus', 'Download Parts of Speech Dataset (as shown below)'),br(),
-                             DT::dataTableOutput('corpus_DF'),
+                             DT::dataTableOutput('corpus_DF')                          
                              
-                             dropdownButton(
-                                 
-                                 tags$h3("List of Inputs"),
-                                 
-                                 sliderInput(inputId = 'min_freq',
-                                             label = 'Minimum Frequency',
-                                             value = 3,
-                                             min = 1,
-                                             max = 10),
-                                 
-                                 sliderInput(inputId = 'max_word',
-                                             label = 'Maximum Word',
-                                             value = 20,
-                                             min = 5,
-                                             max = 100),
-                                 
-                                 circle = TRUE, status = "danger",
-                                 icon = icon("gear"), width = "200px",
-                                 
-                                 tooltip = tooltipOptions(title = "Click to see inputs !")
-                             ),
-                             
-                             plotOutput(outputId = 'word_cloud',width = "800",height = "400"),
-                             
-                             hr(),
-                             h4("Download DTM of selected POS"),
-                             
-                             verbatimTextOutput("dtm_text"),
-                             downloadButton('download_dtm', 'Download DTM'),br(),
-                    
                              ),
                     
                     tabPanel("Named Entity Recognition", value = 1,
