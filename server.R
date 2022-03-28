@@ -228,7 +228,7 @@ shinyServer(function(input, output) {
     
     output$corpus_DF <- DT::renderDataTable({
       req(input$file)
-      dat <- corpus_DF_creation() %>% select(doc_id, upos, POS) %>% filter(upos == "NOUN" | upos == "ADV" | upos == "VERB" | upos == "ADJ" | upos == "PROPN")
+      dat <- corpus_DF_creation() %>% group_by(doc_id) %>% select(doc_id, upos, POS) %>% filter(upos == "NOUN" | upos == "ADV" | upos == "VERB" | upos == "ADJ" | upos == "PROPN")
       # aa = df_null  %>% 
       dat
     },
