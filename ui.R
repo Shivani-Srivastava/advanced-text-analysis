@@ -25,7 +25,7 @@ shinyUI(fluidPage(
     sidebarPanel(
         conditionalPanel(condition = "input.tabselected==1",
                          fileInput("file", "Upload data"),
-                         fileInput("model","Upload model file"),
+                        # fileInput("model","Upload model file"),
                          uiOutput('id_var'),
                          uiOutput("doc_var"),
                          
