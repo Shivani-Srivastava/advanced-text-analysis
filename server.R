@@ -243,8 +243,8 @@ shinyServer(function(input, output) {
         
         for (i0 in 1:nrow(df_out1)){
             for (i1 in 2:ncol(df_out1)){
-                a0 = df_out1[i0, i1]
-                df_out1[i0, i1] = substr(a0, 1, min(100, nchar(a0)))
+                a1 = df_out[i0, i1]
+                df_out1[i0, i1] = substr(a1, 1, min(100, nchar(a1)))
          }
     }
        
