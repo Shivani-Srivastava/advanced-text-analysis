@@ -245,7 +245,7 @@ shinyServer(function(input, output) {
        df0 = anotated_data() %>% select(., c('doc_id','token','upos')) %>%
             filter(upos %in% c("PROPN", "NOUN", "VERB", "ADJ")) 
         
-       a0 = unique(df0()$doc_id)
+       a0 = unique(df0$doc_id)
        
        df_out = data.frame(doc_id = a0, PROPN = character(length(a0)), 
                      NOUN = character(length(a0)), VERB = character(length(a0)), 
