@@ -271,10 +271,10 @@ shinyServer(function(input, output) {
       # aa = df_null  %>% 
       df_out
     },
-    options = list(
-      autoWidth = TRUE,
-      columnDefs = list(list(width = '200px', targets = "_all"))
-    ))
+    #options = list(
+    #  autoWidth = TRUE,
+    #  columnDefs = list(list(width = '200px', targets = "_all"))
+    )#)
     
     output$download_corpus <- downloadHandler(
       filename = function() {paste(str_split(input$file$name,"\\.")[[1]][1],"_DF.csv",collapse = "") },
