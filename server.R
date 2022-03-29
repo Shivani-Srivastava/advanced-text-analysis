@@ -207,6 +207,14 @@ shinyServer(function(input, output) {
       columnDefs = list(list(width = '200px', targets = "_all"))
     ))
     
+    build_char_string <- function(df1, upos0){
+        a1 = df1 %>% filter(upos == upos0) %>% select(token) %>% 
+            distinct(token) %>% # de-duplicate tokens
+            as_tibble() %>% # necessary
+            as.character() %>% str_c(., sep=", ") %>%
+            str_replace_all(., "\"","") %>% str_replace(., "c", "") %>% 
+            str_replace_all(., "[()]","")
+        return(a1) }
     
     # Create a Corpus wise DF of POS distribution
     # D * 5; where D is the number of documents and 5 POS is shown: With the sentence? Without the sentence?
@@ -230,10 +238,10 @@ shinyServer(function(input, output) {
             df1 = df0 %>% filter(doc_id == docid0) 
   
             df_out0 = data.frame(doc_id = docid0, 
-                       PROPN = build_char_string(df0, "PROPN"), 
-                       NOUN = build_char_string(df0, "NOUN"), 
-                       VERB = build_char_string(df0, "VERB"), 
-                       ADJ = build_char_string(df0, "ADJ"))
+                       PROPN = build_char_string(df1, "PROPN"), 
+                       NOUN = build_char_string(df1, "NOUN"), 
+                       VERB = build_char_string(df1, "VERB"), 
+                       ADJ = build_char_string(df1, "ADJ"))
   
             df_out[i0, ] = df_out0
         
@@ -253,14 +261,7 @@ shinyServer(function(input, output) {
           }
     })
     
-    build_char_string <- function(df1, upos0){
-        a1 = df1 %>% filter(upos == upos0) %>% select(token) %>% 
-            distinct(token) %>% # de-duplicate tokens
-            as_tibble() %>% # necessary
-            as.character() %>% str_c(., sep=", ") %>%
-            str_replace_all(., "\"","") %>% str_replace(., "c", "") %>% 
-            str_replace_all(., "[()]","")
-        return(a1) }
+
 
     
     
