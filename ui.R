@@ -102,10 +102,10 @@ shinyUI(fluidPage(
                              
                              ),
                     
-                    tabPanel("Named Entity Recognition", value = 1,
-                             h4("NER"),
-                             dataTableOutput('entity_DF')
-                             ),
+                    #tabPanel("Named Entity Recognition", value = 1,
+                    #         h4("NER"),
+                    #         dataTableOutput('entity_DF')
+                    #         ),
                     
                     
                     
