@@ -190,20 +190,20 @@ shinyServer(function(input, output) {
         
     })
     
-    #ner_model <- nametagger_download_model("english-conll-140408", model_dir = tempdir())
+    ner_model <- nametagger_download_model("english-conll-140408", model_dir = tempdir())
     
-    #x00 = reactive({ anotated_data() %>% select(c("doc_id", "sentence_id", "token")) %>% rename(text = token) })
-    #entities <- reactive({ predict(ner_model, x00()) %>% filter(., entity != "O")}) # 0.03s
+    x00 = reactive({ anotated_data() %>% select(c("doc_id", "sentence_id", "token")) %>% rename(text = token) })
+    entities <- reactive({ predict(ner_model, x00()) %>% filter(., entity != "O")}) # 0.03s
     
-    #output$entity_DF <- renderDataTable({
-      #req(input$file)
-      #as.data.frame(entities())
+    output$entity_DF <- renderDataTable({
+      req(input$file)
+      as.data.frame(entities())
       #cat('Yay')
-    #},
-    #options = list(
-    #  autoWidth = TRUE,
-    #  columnDefs = list(list(width = '200px', targets = "_all"))
-    #))
+    },
+    options = list(
+      autoWidth = TRUE,
+      columnDefs = list(list(width = '200px', targets = "_all"))
+    ))
     
     
     # Create a Corpus wise DF of POS distribution
