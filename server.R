@@ -192,7 +192,7 @@ shinyServer(function(input, output) {
         
     })
     
-    ner_model <- nametagger_load_model("www/english-conll-140408(1).zip")
+    ner_model <- nametagger_download_model("english-conll-140408", model_dir = tempdir()) 
     
     x00 = reactive({ anotated_data() %>% select(c("doc_id", "sentence_id", "token")) %>% rename(text = token) })
     entities <- reactive({ predict(ner_model, x00()) %>% filter(., entity != "O")}) # 0.03s
