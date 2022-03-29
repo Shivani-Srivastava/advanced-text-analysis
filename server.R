@@ -266,12 +266,20 @@ shinyServer(function(input, output) {
                        ADJ = build_char_string(df0, "ADJ"))
   
             df_out[i0, ] = df_out0
+        
   
     } 
+        df_out1 = df[1:5,]
+        for (i0 in 1:nrow(df_out1)){
+            for (i1 in 2:ncol(df_out1)){
+                a0 = df_out1[i0, i1]
+                df_out1[i0, i1] = substr(a0, 1, min(100, nchar(a0)))
+  }
+}
        
       #dat <- corpus_DF_creation() %>% group_by(doc_id) %>% select(doc_id, upos, POS) %>% filter(upos == "NOUN" | upos == "ADV" | upos == "VERB" | upos == "ADJ" | upos == "PROPN")
       # aa = df_null  %>% 
-      df_out
+      df_out1
     },
     #options = list(
     #  autoWidth = TRUE,
