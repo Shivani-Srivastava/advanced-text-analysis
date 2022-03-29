@@ -242,7 +242,7 @@ shinyServer(function(input, output) {
     output$corpus_DF <- DT::renderDataTable({
       req(input$file)
         
-       a0 = unique(corpus_DF_creation()$doc_id)
+       a0 = unique(x00()$doc_id)
        
        df_out = data.frame(doc_id = a0, PROPN = character(length(a0)), 
                      NOUN = character(length(a0)), VERB = character(length(a0)), 
@@ -255,10 +255,10 @@ shinyServer(function(input, output) {
             df1 = df0 %>% filter(doc_id == docid0) 
   
             df_out0 = data.frame(doc_id = docid0, 
-                       PROPN = build_char_string(corpus_DF_creation(), "PROPN"), 
-                       NOUN = build_char_string(corpus_DF_creation(), "NOUN"), 
-                       VERB = build_char_string(corpus_DF_creation(), "VERB"), 
-                       ADJ = build_char_string(corpus_DF_creation(), "ADJ"))
+                       PROPN = build_char_string(x00(), "PROPN"), 
+                       NOUN = build_char_string(x00(), "NOUN"), 
+                       VERB = build_char_string(x00(), "VERB"), 
+                       ADJ = build_char_string(x00(), "ADJ"))
   
             df_out[i0, ] = df_out0
   
