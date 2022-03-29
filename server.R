@@ -226,11 +226,45 @@ shinyServer(function(input, output) {
       }
     })
     
+    build_char_string <- function(df1, upos0){
+        a1 = df1 %>% filter(upos == upos0) %>% select(token) %>% 
+            distinct(token) %>% # de-duplicate tokens
+            as_tibble() %>% # necessary
+            as.character() %>% str_c(., sep=", ") %>%
+            str_replace_all(., "\"","") %>% str_replace(., "c", "") %>% 
+            str_replace_all(., "[()]","")
+        return(a1) }
+
+    
+    
     output$corpus_DF <- DT::renderDataTable({
       req(input$file)
-      dat <- corpus_DF_creation() %>% group_by(doc_id) %>% select(doc_id, upos, POS) %>% filter(upos == "NOUN" | upos == "ADV" | upos == "VERB" | upos == "ADJ" | upos == "PROPN")
+        
+       a0 = unique(corpus_DF_creation()$doc_id)
+       
+       df_out = data.frame(doc_id = a0, PROPN = character(length(a0)), 
+                     NOUN = character(length(a0)), VERB = character(length(a0)), 
+                     ADJ = character(length(a0)))  
+
+          
+        for (i0 in 1:length(a0)){  
+  
+            docid0 = a0[i0]
+            df1 = df0 %>% filter(doc_id == docid0) 
+  
+            df_out0 = data.frame(doc_id = docid0, 
+                       PROPN = build_char_string(corpus_DF_creation(), "PROPN"), 
+                       NOUN = build_char_string(corpus_DF_creation(), "NOUN"), 
+                       VERB = build_char_string(corpus_DF_creation(), "VERB"), 
+                       ADJ = build_char_string(corpus_DF_creation(), "ADJ"))
+  
+            df_out[i0, ] = df_out0
+  
+    } 
+       
+      #dat <- corpus_DF_creation() %>% group_by(doc_id) %>% select(doc_id, upos, POS) %>% filter(upos == "NOUN" | upos == "ADV" | upos == "VERB" | upos == "ADJ" | upos == "PROPN")
       # aa = df_null  %>% 
-      dat
+      df_out
     },
     options = list(
       autoWidth = TRUE,
