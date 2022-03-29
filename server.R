@@ -182,7 +182,7 @@ shinyServer(function(input, output) {
         if (is.null(input$file)) {return(NULL)}
         else{
             
-            model <- udpipe_load_model('www/english-ud-2.0-170801.udpipe')
+            model <- udpipe_load_model('www/english-ewt-ud-2.5-191206.udpipe')
             x <- udpipe_annotate(model, x = dataset1(),doc_id = dataset()[,input$x])
             x <- as.data.frame(x)
            # updateProgressBar(session = session, id = "pb4", value = input$slider)
