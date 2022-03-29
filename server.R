@@ -214,37 +214,7 @@ shinyServer(function(input, output) {
     corpus_DF_creation <- reactive({
       if(is.null(input$file)) {return(NULL)}
       else{
-        #x <- annotated_data()
-        filtered_DF <- select(anotated_data(), c('doc_id','token','upos'))
-        df = NULL
-        for (i in unique(filtered_DF$doc_id)){
-          
-          corpus_specific_DF <- filtered_DF %>% filter(filtered_DF$doc_id == i)
-          df4 <- corpus_specific_DF %>% select(doc_id, token, upos) %>% group_by(upos) %>% mutate( POS = paste0(token, collapse = ",")) %>% distinct(doc_id, POS, .keep_all = TRUE)
-          #print(head(df4))
-          df = rbind(df, df4)
-          
-        }
-        df = df %>% select(doc_id, upos, POS)
-        return(df)  
-      }
-    })
-    
-    build_char_string <- function(df1, upos0){
-        a1 = df1 %>% filter(upos == upos0) %>% select(token) %>% 
-            distinct(token) %>% # de-duplicate tokens
-            as_tibble() %>% # necessary
-            as.character() %>% str_c(., sep=", ") %>%
-            str_replace_all(., "\"","") %>% str_replace(., "c", "") %>% 
-            str_replace_all(., "[()]","")
-        return(a1) }
-
-    
-    
-    output$corpus_DF <- DT::renderDataTable({
-      req(input$file)
-        
-       df0 = anotated_data() %>% select(., c('doc_id','token','upos')) %>%
+     df0 = anotated_data() %>% select(., c('doc_id','token','upos')) %>%
             filter(upos %in% c("PROPN", "NOUN", "VERB", "ADJ")) 
         
        a0 = unique(df0$doc_id)
@@ -269,11 +239,34 @@ shinyServer(function(input, output) {
         
   
     } 
-        df_out0
+        df_out1 =df_out
+        
+        for (i0 in 1:nrow(df_out1)){
+            for (i1 in 2:ncol(df_out1)){
+                a0 = df_out1[i0, i1]
+                df_out1[i0, i1] = substr(a0, 1, min(100, nchar(a0)))
+         }
+    }
        
-      #dat <- corpus_DF_creation() %>% group_by(doc_id) %>% select(doc_id, upos, POS) %>% filter(upos == "NOUN" | upos == "ADV" | upos == "VERB" | upos == "ADJ" | upos == "PROPN")
-      # aa = df_null  %>% 
-      #df_out1
+      
+      return(df_out1)
+    })
+    
+    build_char_string <- function(df1, upos0){
+        a1 = df1 %>% filter(upos == upos0) %>% select(token) %>% 
+            distinct(token) %>% # de-duplicate tokens
+            as_tibble() %>% # necessary
+            as.character() %>% str_c(., sep=", ") %>%
+            str_replace_all(., "\"","") %>% str_replace(., "c", "") %>% 
+            str_replace_all(., "[()]","")
+        return(a1) }
+
+    
+    
+    output$corpus_DF <- DT::renderDataTable({
+      req(input$file)
+        as.data.frame(corpus_DF_creation())
+       
     },
     #options = list(
     #  autoWidth = TRUE,
