@@ -239,17 +239,17 @@ shinyServer(function(input, output) {
         
   
     } 
-        df_out1 =df_out[1:5]
+        #df_out1 =df_out[1:5]
         
-        for (i0 in 1:nrow(df_out1)){
-            for (i1 in 2:ncol(df_out1)){
-                a1 = df_out[i0, i1]
-                df_out1[i0, i1] = substr(a1, 1, min(100, nchar(a1)))
-         }
-    }
+        #for (i0 in 1:nrow(df_out1)){
+        #    for (i1 in 2:ncol(df_out1)){
+        #        a1 = df_out[i0, i1]
+        #        df_out1[i0, i1] = substr(a1, 1, min(100, nchar(a1)))
+        # }
+    #}
        
       
-      return(df_out1)
+      return(df_out)
           }
     })
     
