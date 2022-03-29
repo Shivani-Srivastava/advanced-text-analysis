@@ -239,7 +239,7 @@ shinyServer(function(input, output) {
         
   
     } 
-        df_out1 =df_out
+        df_out1 =df_out[1:5]
         
         for (i0 in 1:nrow(df_out1)){
             for (i1 in 2:ncol(df_out1)){
