@@ -250,6 +250,7 @@ shinyServer(function(input, output) {
        
       
       return(df_out1)
+          }
     })
     
     build_char_string <- function(df1, upos0){
