@@ -9,6 +9,8 @@ library(shiny)
 library(htmltools)
 library("nametagger")
 library(dplyr)
+library(udpipe)
+library(stringr)
 
 options(shiny.maxRequestSize=100*1024^2)
 
