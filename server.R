@@ -160,7 +160,7 @@ shinyServer(function(input, output) {
     
     #
     output$dtm_text <- renderText({
-        if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+        if (is.null(input$file)) { return(NULL) }
         else{
             size = dim(dtm())
             dtm_size = paste("DTM has  ", size[1],"(rows)"," X ", size[2],"(columns)","")
@@ -177,10 +177,12 @@ shinyServer(function(input, output) {
     )
     
     
+    
     anotated_data <- reactive({
-        if (is.null(input$model)) {return(NULL)}
+        if (is.null(input$file)) {return(NULL)}
         else{
-            model <- udpipe_load_model(file = input$model$datapath)
+            
+            model <- udpipe_load_model('www/english-ud-2.0-170801.udpipe')
             x <- udpipe_annotate(model, x = dataset1(),doc_id = dataset()[,input$x])
             x <- as.data.frame(x)
            # updateProgressBar(session = session, id = "pb4", value = input$slider)
@@ -210,7 +212,7 @@ shinyServer(function(input, output) {
     # D * 5; where D is the number of documents and 5 POS is shown: With the sentence? Without the sentence?
     
     corpus_DF_creation <- reactive({
-      if(is.null(input$model)) {return(NULL)}
+      if(is.null(input$file)) {return(NULL)}
       else{
         #x <- annotated_data()
         filtered_DF <- select(anotated_data(), c('doc_id','token','upos'))
@@ -328,7 +330,7 @@ shinyServer(function(input, output) {
 
     output$pos_plot <- renderPlot({
         
-        if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+        if (is.null(input$file)) { return(NULL) }
         
         else{
             #if(input$pos_select=="NNPS"){
@@ -394,7 +396,7 @@ shinyServer(function(input, output) {
     
     
     output$a_table <- DT::renderDataTable({
-        if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+        if (is.null(input$file)) { return(NULL) }
         else{
             summ_table <- as.data.frame(table(anotated_data()$upos))
             colnames(summ_table) <- c("POS TAG", "Unique Count")
@@ -447,7 +449,7 @@ shinyServer(function(input, output) {
     
     output$word_cloud <- renderPlot({
         
-        if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+        if (is.null(input$file)) { return(NULL) }
         else{
             if(input$pos_select=="NNPS"){
                 stats <- subset(anotated_data(), xpos %in% input$pos_select)
@@ -484,7 +486,7 @@ shinyServer(function(input, output) {
     #---Keyword tab code
     
     output$ext_df <- DT::renderDataTable({
-      if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+      if (is.null(input$file)) { return(NULL) }
       else{
         if(input$key_algo=="RAKE"){
           stats <- keywords_rake(x = anotated_data(), term = "lemma", group = "doc_id", 
@@ -518,7 +520,7 @@ shinyServer(function(input, output) {
     
     
     output$key_plot <- renderPlot({
-        if (is.null(input$file) | is.null(input$model)) { return(NULL) }
+        if (is.null(input$file)) { return(NULL) }
         else{
             if(input$key_algo=="RAKE"){
                 stats <- keywords_rake(x = anotated_data(), term = "lemma", group = "doc_id", 
